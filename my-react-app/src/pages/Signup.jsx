@@ -1,45 +1,78 @@
 import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { signup } from '../api/auth.api.js';
-import { Link, useNavigate } from 'react-router-dom';
 
 export default function Signup() {
   const { login: setAuth } = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const nav = useNavigate();
+
+  function update(field, value) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
 
   async function onSubmit(e) {
     e.preventDefault();
     setError('');
+    setSubmitting(true);
     try {
-      const data = await signup({ name, email, password });
+      const data = await signup(form);
       setAuth(data.token, data.user);
       nav('/dashboard');
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Signup failed');
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <form onSubmit={onSubmit} className="w-full max-w-md border rounded-xl p-6 bg-white/70 backdrop-blur">
-        <h1 className="text-3xl font-semibold mb-2">Create account</h1>
-        {error && <p className="text-red-600 mb-3">{error}</p>}
-        <label className="block text-left mb-2">Name</label>
-        <input className="w-full border rounded px-3 py-2 mb-3" value={name} onChange={(e) => setName(e.target.value)} />
-        <label className="block text-left mb-2">Email</label>
-        <input className="w-full border rounded px-3 py-2 mb-3" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <label className="block text-left mb-2">Password</label>
-        <input type="password" className="w-full border rounded px-3 py-2 mb-4" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button className="w-full bg-brand-600 text-white rounded py-2 font-medium" type="submit">Sign up</button>
-        <p className="mt-3 text-sm">
-          Already have an account? <Link className="text-brand-700 underline" to="/login">Login</Link>
+    <main className="flex min-h-screen items-center justify-center bg-[#0b1326] px-4 py-10 text-[#dae2fd]">
+      <form onSubmit={onSubmit} className="w-full max-w-xl rounded-3xl p-8 shadow-2xl glass-card md:p-10">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-tr from-[#7c3aed] to-[#4cd7f6]">
+            <span className="material-symbols-outlined text-white">bolt</span>
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-[#d2bbff]">Create SmartStore Account</h1>
+            <p className="text-[#ccc3d8]">Start managing inventory with AI-assisted workflows.</p>
+          </div>
+        </div>
+
+        {error && <p className="mb-5 rounded-xl border border-[#ffb4ab]/20 bg-[#ffb4ab]/10 px-4 py-3 text-sm text-[#ffb4ab]">{error}</p>}
+
+        <div className="space-y-5">
+          {[
+            ['name', 'Name', 'text', 'Alex Rivera'],
+            ['email', 'Email Address', 'email', 'admin@smartstore.ai'],
+            ['password', 'Password', 'password', 'Create a secure password'],
+          ].map(([field, label, type, placeholder]) => (
+            <label key={field} className="block space-y-2">
+              <span className="ml-1 font-mono text-sm text-[#ccc3d8]">{label}</span>
+              <input
+                className="w-full rounded-xl border border-[#4a4455]/40 bg-[#222a3d] px-4 py-4 text-[#dae2fd] outline-none transition focus:border-[#d2bbff]"
+                value={form[field]}
+                onChange={(e) => update(field, e.target.value)}
+                placeholder={placeholder}
+                type={type}
+                required
+              />
+            </label>
+          ))}
+        </div>
+
+        <button className="primary-gradient-btn mt-8 flex w-full items-center justify-center gap-3 rounded-xl py-4 font-bold text-[#25005a]" type="submit" disabled={submitting}>
+          <span className={`material-symbols-outlined ${submitting ? 'animate-spin' : ''}`}>{submitting ? 'refresh' : 'person_add'}</span>
+          {submitting ? 'Creating account...' : 'Create Account'}
+        </button>
+
+        <p className="mt-6 text-center text-sm text-[#ccc3d8]">
+          Already have an account? <Link className="font-semibold text-[#4cd7f6] hover:underline" to="/login">Sign in</Link>
         </p>
       </form>
-    </div>
+    </main>
   );
 }
-
