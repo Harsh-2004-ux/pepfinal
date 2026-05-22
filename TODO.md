@@ -1,35 +1,30 @@
-# SmartStore AI — Build TODO
+# SmartStore AI — Implementation Checklist
 
-## Backend (Node.js/Express/MongoDB)
-- [ ] Create `server/` scaffold with required folders/files:
-  - server.js, .env.example
-  - config/db.js
-  - models/User.js, Product.js, Sale.js
-  - routes/auth.routes.js, product.routes.js, ai.routes.js, dashboard.routes.js
-  - controllers/auth.controller.js, product.controller.js, ai.controller.js, dashboard.controller.js
-  - middleware/auth.middleware.js, error.middleware.js
-  - services/openai.service.js, analytics.service.js
-- [ ] Add backend dependencies + `server/package.json`
-- [ ] Implement auth (signup/login) with JWT + bcrypt
+## Backend (Express + MongoDB + JWT + AI + Analytics)
+
+- [ ] Scaffold missing folders/files (routes/controllers/models/services/middleware)
+- [ ] Complete `server/models/User.js`
+- [ ] Add `server/models/Product.js` and `server/models/Sale.js`
+- [ ] Implement auth routes/controllers + JWT middleware
 - [ ] Implement product CRUD
-- [ ] Implement AI generation endpoints (description, SEO tags, marketing captions)
-- [ ] Implement analytics endpoints (revenue analytics, top products, trending insights, AI suggestions, pricing recommendations)
-- [ ] Add inventory low-stock detection (optional) and wire into dashboard
+- [ ] Implement AI generation endpoint (real OpenAI when key exists, mock fallback otherwise)
+- [ ] Implement dashboard analytics endpoints (revenue series, top products, trending insights, AI suggestions, pricing recommendations)
+- [ ] Optional: inventory low-stock detection wired into dashboard
+- [ ] Smoke test backend endpoints
 
-## Frontend (React/Vite/Tailwind/Chart.js)
-- [ ] Update `my-react-app/` dependencies: react-router, axios, tailwind, chart.js, react-chartjs-2
-- [ ] Create required frontend folders/files:
-  - src/pages/*
-  - src/components/*
-  - src/context/AuthContext.jsx
-  - src/hooks/useProducts.js, useDashboard.js
-  - src/api/auth.api.js, products.api.js, ai.api.js
-- [ ] Implement routing + protected dashboard
-- [ ] Implement Products CRUD UI + AI panel to generate content
-- [ ] Implement Dashboard UI: RevenueChart, TopProducts, AISuggestions, etc.
+## Frontend (React + Vite + Tailwind + Chart.js)
 
-## End-to-end
-- [ ] Configure API base URL + CORS
-- [ ] Run frontend and backend locally
-- [ ] Smoke test: signup/login → add product → AI generate → dashboard analytics
+- [ ] Update `my-react-app` dependencies
+- [ ] Add Tailwind setup (tailwind.config.js + postcss.config.js) and wire into CSS
+- [ ] Implement routing + AuthContext + protected dashboard
+- [ ] Implement Products pages + CRUD + Product detail
+- [ ] Implement AIPanel to generate descriptions/tags/captions
+- [ ] Implement Dashboard UI (RevenueChart, TopProducts, AISuggestions, Pricing recs, Trending insights)
+- [ ] Add minimal “record test sale” action to populate analytics
+- [ ] Smoke test full flow: signup/login → CRUD product → AI generate → dashboard analytics
 
+## GitHub PR
+
+- [ ] Create branch `blackboxai/<name>`
+- [ ] Make at least 7 meaningful commits
+- [ ] Push branch and open PR: https://github.com/Harsh-2004-ux/pepfinal
