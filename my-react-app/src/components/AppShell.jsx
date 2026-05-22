@@ -103,9 +103,13 @@ export default function AppShell({ children, title = 'Dashboard Overview', subti
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-around bg-[#171f33]/90 px-4 backdrop-blur-xl md:hidden">
         {navItems.slice(0, 4).map((item) => (
-          <NavLink key={`mobile-${item.label}`} to={item.to} className={({ isActive }) => `flex flex-col items-center gap-1 text-[10px] ${isActive ? 'text-[#d2bbff]' : 'text-[#ccc3d8]'}`}>
-            <Icon className={isActive ? "[font-variation-settings:'FILL'_1]" : ''}>{item.icon}</Icon>
-            {item.label.split(' ')[0]}
+          <NavLink key={`mobile-${item.label}`} to={item.to}>
+            {({ isActive }) => (
+              <span className={`flex flex-col items-center gap-1 text-[10px] ${isActive ? 'text-[#d2bbff]' : 'text-[#ccc3d8]'}`}>
+                <Icon className={isActive ? "[font-variation-settings:'FILL'_1]" : ''}>{item.icon}</Icon>
+                {item.label.split(' ')[0]}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

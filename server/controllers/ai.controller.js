@@ -1,4 +1,4 @@
-import { generateProductContent } from '../services/openai.service.js';
+import { generateProductContent } from '../services/gemini.service.js';
 import Product from '../models/Product.js';
 
 export async function generate(req, res, next) {

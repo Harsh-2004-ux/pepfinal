@@ -22,7 +22,21 @@ export default function Products() {
 
   useEffect(() => {
     if (!token) return;
-    loadProducts('');
+    let ignore = false;
+
+    async function fetchInitialProducts() {
+      const rows = await getProducts(token, '');
+      if (!ignore) {
+        setProducts(rows || []);
+        setLoading(false);
+      }
+    }
+
+    fetchInitialProducts();
+
+    return () => {
+      ignore = true;
+    };
   }, [token]);
 
   async function onDelete(id) {
