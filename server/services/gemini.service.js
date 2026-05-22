@@ -73,37 +73,43 @@ Product details may be partial:
 Return only valid JSON with keys: description, seoTags, marketingCaption.
 seoTags must be an array of strings.`;
 
-  const response = await fetch(`${GEMINI_ENDPOINT}/${MODEL}:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        responseMimeType: 'application/json',
+  try {
+    const response = await fetch(`${GEMINI_ENDPOINT}/${MODEL}:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }),
-  });
+      body: JSON.stringify({
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          responseMimeType: 'application/json',
+        },
+      }),
+    });
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`Gemini request failed (${response.status}): ${message}`);
+    if (!response.ok) {
+      const message = await response.text();
+      console.error(`Gemini request failed (${response.status}): ${message}`);
+      return fallback;
+    }
+
+    const data = await response.json();
+    const text = data.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('') || '{}';
+    const parsed = extractJson(text) || fallback;
+
+    return {
+      description: parsed.description || fallback.description,
+      seoTags: Array.isArray(parsed.seoTags) ? parsed.seoTags : fallback.seoTags,
+      marketingCaption: parsed.marketingCaption || fallback.marketingCaption,
+    };
+  } catch (err) {
+    console.error('Gemini request failed:', err.message);
+    return fallback;
   }
-
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('') || '{}';
-  const parsed = extractJson(text) || fallback;
-
-  return {
-    description: parsed.description || fallback.description,
-    seoTags: Array.isArray(parsed.seoTags) ? parsed.seoTags : fallback.seoTags,
-    marketingCaption: parsed.marketingCaption || fallback.marketingCaption,
-  };
 }

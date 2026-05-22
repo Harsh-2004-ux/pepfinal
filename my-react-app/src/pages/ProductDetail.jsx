@@ -20,6 +20,7 @@ export default function ProductDetail() {
   const nav = useNavigate();
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [aiError, setAiError] = useState('');
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -77,6 +78,7 @@ export default function ProductDetail() {
   async function onGenerateAI() {
     if (!token) return;
     setGenerating(true);
+    setAiError('');
     try {
       const data = await generateAIForProduct(token, { productId: id, product: { name: form.name, category: form.category, price: form.price } });
       const gen = data.generated || data;
@@ -86,6 +88,8 @@ export default function ProductDetail() {
         seoTags: gen.seoTags || current.seoTags,
         marketingCaption: gen.marketingCaption || current.marketingCaption,
       }));
+    } catch (err) {
+      setAiError(err?.response?.data?.message || err.message || 'AI generation failed. Please try again.');
     } finally {
       setGenerating(false);
     }
@@ -160,6 +164,12 @@ export default function ProductDetail() {
                 </div>
               </div>
             </div>
+
+            {aiError && (
+              <p className="rounded-xl border border-[#ffb4ab]/20 bg-[#ffb4ab]/10 px-4 py-3 text-sm text-[#ffb4ab]">
+                {aiError}
+              </p>
+            )}
 
             <div className="flex flex-wrap justify-end gap-3">
               <button className="flex items-center gap-2 rounded-xl border border-[#4a4455]/30 px-5 py-3 font-semibold text-[#d2bbff] hover:bg-[#d2bbff]/10" onClick={onGenerateAI} type="button" disabled={generating}>
