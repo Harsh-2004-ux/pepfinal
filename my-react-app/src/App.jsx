@@ -36,6 +36,14 @@ function App() {
             }
           />
           <Route
+            path="/products/new"
+            element={
+              <RequireAuth>
+                <ProductDetail />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/products/:id"
             element={
               <RequireAuth>
@@ -51,4 +59,3 @@ function App() {
 }
 
 export default App;
-
